@@ -248,3 +248,115 @@ matches, and nothing in the output warns the user that this is happening.
 
 The clearest example for me was the blues profile: Blue Hour Smoke dropped from #1 to #5 when I
 raised the energy weight, even though its genre and mood still matched.
+
+---
+
+## Stretch Features
+
+All four optional challenges are implemented as **opt-in flags**, so the default
+`python -m src.main` output above is unchanged.
+
+| Challenge | How to run | What it does |
+|---|---|---|
+| 1. Advanced song features | `python -m src.main --advanced` | 5 new attributes (popularity, release_decade, mood_tags, instrumentalness, speechiness) and 3 profiles that use them |
+| 2. Multiple scoring modes | `python -m src.main --mode mood-first` (or `energy-focused`) | Strategy pattern: swappable weight sets |
+| 3. Diversity penalty | `python -m src.main --diverse` | −1.0 for a repeated artist, −0.5 for a repeated genre in the top k |
+| 4. Summary table | `python -m src.main --table` | tabulate grid with a reasons column |
+
+Flags can be combined, e.g. `python -m src.main --advanced --mode mood-first --diverse --table`.
+Process notes are in [ai_interactions.md](ai_interactions.md).
+
+**Mood-first mode fixes the "Gym Hero" problem.** Gym Hero drops from #2 to #4 and the happy songs move up:
+
+```
+Profile: High-Energy Pop
+Prefs:   {'genre': 'pop', 'mood': 'happy', 'energy': 0.85}
+Mode:    mood-first
+------------------------------------------------------------
+1. Sunrise City by Neon Echo  [pop, happy]
+   Score: 5.44
+   Because: genre match (+1.0); mood match (+2.5); energy closeness (+1.94)
+2. Neon Fiesta by Ritmo Sur  [latin, happy]
+   Score: 4.50
+   Because: mood match (+2.5); energy closeness (+2.00)
+3. Rooftop Lights by Indigo Parade  [indie pop, happy]
+   Score: 4.32
+   Because: mood match (+2.5); energy closeness (+1.82)
+4. Gym Hero by Max Pulse  [pop, intense]
+   Score: 2.84
+   Because: genre match (+1.0); energy closeness (+1.84)
+5. Storm Runner by Voltline  [rock, intense]
+   Score: 1.88
+   Because: energy closeness (+1.88)
+```
+
+**Diversity penalty.** Focus Flow (a second LoRoom song and a third lofi song) is pushed down, and an ambient song gets in:
+
+```
+Profile: Chill Lofi
+Prefs:   {'genre': 'lofi', 'mood': 'chill', 'energy': 0.35, 'likes_acoustic': True}
+Mode:    genre-first + diversity penalty
+------------------------------------------------------------
+1. Library Rain by Paper Lanterns  [lofi, chill]
+   Score: 5.50
+   Because: genre match (+2.0); mood match (+1.0); energy closeness (+2.00); acoustic bonus (+0.5)
+2. Midnight Coding by LoRoom  [lofi, chill]
+   Score: 4.86
+   Because: genre match (+2.0); mood match (+1.0); energy closeness (+1.86); acoustic bonus (+0.5); diversity penalty: genre repeat (-0.5)
+3. Spacewalk Thoughts by Orbit Bloom  [ambient, chill]
+   Score: 3.36
+   Because: mood match (+1.0); energy closeness (+1.86); acoustic bonus (+0.5)
+4. Focus Flow by LoRoom  [lofi, focused]
+   Score: 2.90
+   Because: genre match (+2.0); energy closeness (+1.90); acoustic bonus (+0.5); diversity penalty: artist repeat (-1.0); diversity penalty: genre repeat (-0.5)
+5. Coffee Shop Stories by Slow Stereo  [jazz, relaxed]
+   Score: 2.46
+   Because: energy closeness (+1.96); acoustic bonus (+0.5)
+```
+
+**Advanced features.** The hidden-gem, decade, and mood-tag bonuses at work:
+
+```
+Profile: Nostalgic Hidden-Gem Hunter
+Prefs:   {'genre': 'country', 'mood': 'nostalgic', 'energy': 0.5, 'likes_popular': False, 'decade': 1990, 'mood_tags': ['nostalgic', 'warm']}
+------------------------------------------------------------
+1. Dust Road Home by Willow Creek  [country, nostalgic]
+   Score: 7.51
+   Because: genre match (+2.0); mood match (+1.0); energy closeness (+1.96); hidden-gem (+0.55); decade match (+1.0); mood tags ['nostalgic', 'warm'] (+1.0)
+2. Coffee Shop Stories by Slow Stereo  [jazz, relaxed]
+   Score: 3.82
+   Because: energy closeness (+1.74); hidden-gem (+0.58); decade match (+1.0); mood tags ['warm'] (+0.5)
+3. Velvet Static by Mara Lune  [r&b, romantic]
+   Score: 3.27
+   Because: energy closeness (+1.90); hidden-gem (+0.37); near decade (+0.5); mood tags ['warm'] (+0.5)
+4. Paper Boats by Autumn Thread  [folk, melancholic]
+   Score: 3.22
+   Because: energy closeness (+1.60); hidden-gem (+0.62); near decade (+0.5); mood tags ['nostalgic'] (+0.5)
+5. Island Breeze by Coral Kings  [reggae, relaxed]
+   Score: 2.96
+   Because: energy closeness (+1.96); hidden-gem (+0.50); mood tags ['warm'] (+0.5)
+```
+
+**Summary table:**
+
+```
+High-Energy Pop | mode: genre-first
++-----+----------------+---------------+-----------+---------+--------------------------+
+| #   | Title          | Artist        | Genre     | Score   | Reasons                  |
++=====+================+===============+===========+=========+==========================+
+| 1   | Sunrise City   | Neon Echo     | pop       | 4.94    | genre match (+2.0)       |
+|     |                |               |           |         | mood match (+1.0)        |
+|     |                |               |           |         | energy closeness (+1.94) |
++-----+----------------+---------------+-----------+---------+--------------------------+
+| 2   | Gym Hero       | Max Pulse     | pop       | 3.84    | genre match (+2.0)       |
+|     |                |               |           |         | energy closeness (+1.84) |
++-----+----------------+---------------+-----------+---------+--------------------------+
+| 3   | Neon Fiesta    | Ritmo Sur     | latin     | 3.00    | mood match (+1.0)        |
+|     |                |               |           |         | energy closeness (+2.00) |
++-----+----------------+---------------+-----------+---------+--------------------------+
+| 4   | Rooftop Lights | Indigo Parade | indie pop | 2.82    | mood match (+1.0)        |
+|     |                |               |           |         | energy closeness (+1.82) |
++-----+----------------+---------------+-----------+---------+--------------------------+
+| 5   | Storm Runner   | Voltline      | rock      | 1.88    | energy closeness (+1.88) |
++-----+----------------+---------------+-----------+---------+--------------------------+
+```
