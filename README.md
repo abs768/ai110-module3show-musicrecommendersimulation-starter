@@ -5,6 +5,8 @@ VibeFinder 1.0 is a small content-based music recommender. It loads a 20-song ca
 data/songs.csv, compares every song to a user's taste profile (favorite genre, favorite mood,
 target energy, and whether they like acoustic music), scores each song, and returns the top 5
 with a plain-English reason for each pick.
+It is a CLI-first simulation: run `python -m src.main` to see ranked recommendations
+with scores and reasons for five user profiles.
 
 ## How The System Works
 **Real-world recommenders:** Platforms like Spotify and YouTube combine two ideas.
@@ -48,6 +50,7 @@ ignore great songs that match the user's mood and energy but carry a different g
    python -m venv .venv
    source .venv/bin/activate      # Mac or Linux
    .\.venv\Scripts\Activate.ps1          # Windows PowerShell
+   ```
 
 2. Install dependencies
 
