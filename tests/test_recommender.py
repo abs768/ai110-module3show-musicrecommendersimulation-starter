@@ -85,3 +85,38 @@ def test_recommend_songs_is_sorted_and_respects_k():
     scores = [score for _, score, _ in results]
     assert scores == sorted(scores, reverse=True)
     assert results[0][0]["genre"] == "lofi"
+
+# ---- Stretch feature tests ----
+import pytest
+
+
+def test_advanced_features_are_loaded_and_scored():
+    songs = load_songs("data/songs.csv")
+    dust = next(s for s in songs if s["title"] == "Dust Road Home")
+    assert dust["release_decade"] == 1990
+    assert dust["mood_tags"] == ["nostalgic", "warm"]
+    prefs = {"genre": "country", "mood": "nostalgic", "energy": 0.5,
+             "decade": 1990, "mood_tags": ["nostalgic", "warm"]}
+    score, reasons = score_song(prefs, dust)
+    assert any("decade match" in r for r in reasons)
+    assert any("mood tags" in r for r in reasons)
+
+
+def test_mood_first_mode_ranks_happy_songs_above_gym_hero():
+    songs = load_songs("data/songs.csv")
+    prefs = {"genre": "pop", "mood": "happy", "energy": 0.85}
+    titles = [s["title"] for s, _, _ in recommend_songs(prefs, songs, k=5, mode="mood-first")]
+    assert titles.index("Neon Fiesta") < titles.index("Gym Hero")
+
+
+def test_unknown_mode_raises():
+    with pytest.raises(ValueError):
+        recommend_songs({"genre": "pop"}, [], mode="nope")
+
+
+def test_diversity_penalty_limits_repeated_artists():
+    songs = load_songs("data/songs.csv")
+    prefs = {"genre": "lofi", "mood": "chill", "energy": 0.35, "likes_acoustic": True}
+    results = recommend_songs(prefs, songs, k=3, diverse=True)
+    artists = [s["artist"] for s, _, _ in results]
+    assert len(artists) == len(set(artists))
