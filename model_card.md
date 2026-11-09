@@ -12,6 +12,9 @@ and ranks songs by that match.
 - 20 songs: 10 from the starter plus 10 I added.
 - Features per song: genre, mood, energy, tempo, valence, danceability, acousticness.
   The model uses genre, mood, energy, and acousticness.
+- Stretch: 5 advanced columns (popularity 0-100, release_decade, mood_tags,
+  instrumentalness, speechiness). They are only scored when a profile asks for them
+  (python -m src.main --advanced).
 - 17 genres and 14 moods. Lofi has 3 songs and pop has 2; every other genre has just 1.
 - Limits: the data is invented and small, uses mostly Western genre labels, and has no lyrics,
   language, release year, popularity, or real listening history.
@@ -78,7 +81,8 @@ judging what music is "good". It shouldn't be used for any decision where a bad 
 
 ## 8. Ideas for Improvement
 1. Partial credit for related genres and moods (indie pop ≈ pop, chill ≈ relaxed).
-2. A diversity rule so the top 5 isn't filled by the same high-energy songs or artists.
+2. ~~A diversity rule~~ Done as a stretch feature: `--diverse` penalizes repeated
+   artists (-1.0) and genres (-0.5). Next step: also limit how many songs share one energy band.
 3. Use tempo, valence, and danceability, and let users list several favorite genres.
 
 ## 9. Personal Reflection

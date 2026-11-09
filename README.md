@@ -188,7 +188,7 @@ Prefs:   {'genre': 'k-pop', 'mood': 'happy', 'energy': 0.6}
 ```
 Loaded songs: 20
 
-##### BASELINE  weights={'genre': 2.0, 'mood': 1.0, 'energy': 2.0, 'acoustic': 0.5}
+##### BASELINE  weights={'genre': 2.0, 'mood': 1.0, 'energy': 2.0, 'acoustic': 0.5, 'popularity': 1.0, 'decade': 1.0, 'mood_tags': 0.5, 'instrumental': 0.5, 'speechy': 0.5}
 
 High-Energy Pop
   1. Sunrise City (pop, happy) 4.94
@@ -204,7 +204,7 @@ Conflicted (sad but high energy)
   4. Iron Lung Choir (metal, angry) 1.96
   5. Storm Runner (rock, intense) 1.92
 
-##### EXPERIMENT: genre halved, energy doubled  weights={'genre': 1.0, 'mood': 1.0, 'energy': 4.0, 'acoustic': 0.5}
+##### EXPERIMENT: genre halved, energy doubled  weights={'genre': 1.0, 'mood': 1.0, 'energy': 4.0, 'acoustic': 0.5, 'popularity': 1.0, 'decade': 1.0, 'mood_tags': 0.5, 'instrumental': 0.5, 'speechy': 0.5}
 
 High-Energy Pop
   1. Sunrise City (pop, happy) 5.88
