@@ -242,3 +242,6 @@ genre and mood don't match.
 Bias comes less from bad intentions and more from what the data and weights leave out. A blues or
 k-pop fan gets one good match (or none) followed by filler, while pop and lofi fans get several real
 matches, and nothing in the output warns the user that this is happening.
+
+The clearest example for me was the blues profile: Blue Hour Smoke dropped from #1 to #5 when I
+raised the energy weight, even though its genre and mood still matched.

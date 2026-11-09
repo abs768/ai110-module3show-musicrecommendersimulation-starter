@@ -89,9 +89,13 @@ the only song that truly fit the sad-blues user down to #5.
 songs, and brainstorm edge-case profiles quickly. I had to verify its work: the starter's import in
 main.py was broken, and the starter tests passed only by luck, because they just returned the first
 two songs. I checked the scores against hand math (Sunrise City = 2 + 1 + 1.94 = 4.94).
+I reran the output after changing the weights and watched Blue Hour Smoke move from #1 to #5; seeing
+that shift made the scoring trade-off feel much less abstract.
 
-**What surprised me:** a few lines of addition plus a sort, with a "Because:" line, already *feel*
-like a real recommender.
+**What surprised me:** I expected the genre match to keep Blue Hour Smoke near the top, but raising
+the energy weight pushed it down to #5. Seeing the scores made it clear how one small setting can
+change what the system thinks a good match is.
 
-**What I'd try next:** a bigger and more diverse catalog, partial genre matching, and learning weights
-from likes and skips instead of choosing them by hand.
+**What I'd try next:** I'd add more songs across genres first, because one blues song leaves the system
+with little to offer a blues fan. Then I'd let people choose related genres or a range of moods and
+see whether that makes the recommendations feel less rigid.
